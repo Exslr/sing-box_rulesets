@@ -1,0 +1,78 @@
+name: Manual Select Convert (JSON to SRS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_folder:
+        description: '选择你要转换的规则目录'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - dns (根目录)
+          - rules/dns
+          - rules/route
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install sing-box
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep tag_name | cut -d ":" -f2 | sed 's/\"//g;s/,//g;s/ //g;s/v//')
+          wget https://github.com/SagerNet/sing-box/releases/download/v${VERSION}/sing-box-${VERSION}-linux-amd64.tar.gz
+          tar -xvf sing-box-${VERSION}-linux-amd64.tar.gz
+          sudo mv sing-box-${VERSION}-linux-amd64/sing-box /usr/local/bin/
+
+      - name: Convert Selected JSON
+        run: |
+          # 定义转换函数以减少重复代码
+          convert_dir() {
+            local src_dir=$1
+            local out_dir="srs/$1"
+            mkdir -p "$out_dir"
+            for file in "$src_dir"/*.json; do
+              if [ -f "$file" ]; then
+                filename=$(basename "$file" .json)
+                echo "Converting $file -> $out_dir/${filename}.srs"
+                sing-box rule-set compile "$file" -o "$out_dir/${filename}.srs"
+              fi
+            done
+          }
+
+          # 根据输入决定转换哪个
+          case "${{ github.event.inputs.target_folder }}" in
+            "dns (根目录)")
+              convert_dir "dns"
+              ;;
+            "rules/dns")
+              convert_dir "rules/dns"
+              ;;
+            "rules/route")
+              convert_dir "rules/route"
+              ;;
+            "all")
+              convert_dir "dns"
+              convert_dir "rules/dns"
+              convert_dir "rules/route"
+              ;;
+          esac
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add srs/**/*.srs
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: manual compile selected rules (${{ github.event.inputs.target_folder }})"
+            git push
+          else
+            echo "No changes in SRS files."
+          fi
