@@ -1,18 +1,12 @@
-name: Manual Select Convert (JSON to SRS)
+name: Manual Specific File Convert (JSON to SRS)
 
 on:
   workflow_dispatch:
     inputs:
-      target_folder:
-        description: '选择你要转换的规则目录'
+      file_name:
+        description: '输入要转换的 JSON 文件名 (例如: my_rules.json)，或者输入 "all" 转换全部'
         required: true
         default: 'all'
-        type: choice
-        options:
-          - all
-          - dns (根目录)
-          - rules/dns
-          - rules/route
 
 jobs:
   convert:
@@ -31,39 +25,40 @@ jobs:
           tar -xvf sing-box-${VERSION}-linux-amd64.tar.gz
           sudo mv sing-box-${VERSION}-linux-amd64/sing-box /usr/local/bin/
 
-      - name: Convert Selected JSON
+      - name: Convert Logic
         run: |
-          # 定义转换函数以减少重复代码
-          convert_dir() {
-            local src_dir=$1
-            local out_dir="srs/$1"
-            mkdir -p "$out_dir"
-            for file in "$src_dir"/*.json; do
-              if [ -f "$file" ]; then
-                filename=$(basename "$file" .json)
-                echo "Converting $file -> $out_dir/${filename}.srs"
-                sing-box rule-set compile "$file" -o "$out_dir/${filename}.srs"
-              fi
-            done
+          TARGET="${{ github.event.inputs.file_name }}"
+          
+          # 定义搜索和转换函数
+          do_compile() {
+            local src=$1
+            # 保持目录结构输出到 srs 文件夹
+            local out="srs/${src%.json}.srs"
+            mkdir -p "$(dirname "$out")"
+            echo "Converting $src to $out"
+            sing-box rule-set compile "$src" -o "$out"
           }
 
-          # 根据输入决定转换哪个
-          case "${{ github.event.inputs.target_folder }}" in
-            "dns (根目录)")
-              convert_dir "dns"
-              ;;
-            "rules/dns")
-              convert_dir "rules/dns"
-              ;;
-            "rules/route")
-              convert_dir "rules/route"
-              ;;
-            "all")
-              convert_dir "dns"
-              convert_dir "rules/dns"
-              convert_dir "rules/route"
-              ;;
-          esac
+          if [ "$TARGET" = "all" ]; then
+            echo "Mode: Convert all JSON files in dns/ and rules/"
+            # 查找并转换所有相关的 JSON
+            find dns rules -name "*.json" | while read -r file; do
+              do_compile "$file"
+            done
+          else
+            echo "Mode: Searching for specific file: $TARGET"
+            # 在指定目录下查找该文件
+            found_files=$(find dns rules -name "$TARGET")
+            
+            if [ -z "$found_files" ]; then
+              echo "Error: Could not find $TARGET in dns/ or rules/ folders."
+              exit 1
+            fi
+
+            for file in $found_files; do
+              do_compile "$file"
+            done
+          fi
 
       - name: Commit and Push
         run: |
@@ -71,8 +66,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add srs/**/*.srs
           if ! git diff --cached --quiet; then
-            git commit -m "chore: manual compile selected rules (${{ github.event.inputs.target_folder }})"
+            git commit -m "chore: manual compile ${{ github.event.inputs.file_name }}"
             git push
           else
-            echo "No changes in SRS files."
+            echo "No changes detected."
           fi
