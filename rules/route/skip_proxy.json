@@ -3,7 +3,7 @@
   "rules": [
     {
       "domain": [
-        "www.sxjkjyx.com"
+        "www.baidu.com"
       ],
       "domain_suffix": [
         "passenger.t3go.cn",
@@ -25,12 +25,10 @@
         "wegame.com",
         "riotgames.com",
         "some.url",
-        "lolesports.com",
-        "sxjkjyx.com"
+        "lolesports.com"
       ],
       "domain_keyword": [
-        "sxjk",
-        "sxjt"
+        "tencent"
       ],
       "process_name": [
         "LeagueClient.exe",
