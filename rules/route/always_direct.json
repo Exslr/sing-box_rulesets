@@ -3,14 +3,18 @@
   "rules": [
     {
       "domain": [
-        "www.sxjkjyx.com"
+        "www.sxjkjyx.com",
+        "www.jtjt.info"
       ],
       "domain_suffix": [
-        "sxjkjyx.com"
+        "sxjkjyx.com"，
+        "jtjt.info"
       ],
       "domain_keyword": [
         "sxjk",
-        "sxjt"
+        "sxjt",
+        "jtjt",
+        "sxjtjt"
       ]
     }
   ]
