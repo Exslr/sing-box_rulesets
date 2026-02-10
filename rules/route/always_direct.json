@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 1,
   "rules": [
     {
       "domain": [
@@ -11,9 +11,6 @@
       "domain_keyword": [
         "sxjk",
         "sxjt"
-      ],
-      "process_name": [
-        "LeagueClient.exe",
       ]
     }
   ]
