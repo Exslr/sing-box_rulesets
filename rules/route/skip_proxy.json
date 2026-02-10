@@ -31,6 +31,15 @@
       "domain_keyword": [
         "sxjk",
         "sxjt"
+      ],
+      "process_name": [
+        "LeagueClient.exe",
+        "LeagueClientUx.exe",
+        "League of Legends.exe",
+        "wegame.exe",
+        "cs2.exe",
+        "UURemote.exe",
+        "UURemoteInternal.exe"
       ]
     }
   ]
