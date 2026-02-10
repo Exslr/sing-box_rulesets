@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "rules": [
+    {
+      "domain": [
+        "www.sxjkjyx.com"
+      ],
+      "domain_suffix": [
+        "passenger.t3go.cn",
+        ".ccb.com",
+        "wxh.wo.cn",
+        "abcchina.com",
+        "abcchina.com.cn",
+        "captive.apple.com",
+        "facetime.apple.com",
+        "ess.apple.com",
+        "push.apple.com",
+        "identity.apple.com",
+        "init.itunes.apple.com",
+        "qq.com",
+        "qqmusic.qq.com",
+        "music.qq.com",
+        "music.tc.qq.com",
+        "gtimg.com",
+        "wegame.com",
+        "riotgames.com",
+        "some.url",
+        "lolesports.com",
+        "sxjkjyx.com"
+      ],
+      "domain_keyword": [
+        "sxjk",
+        "sxjt"
+      ]
+    }
+  ]
+}
