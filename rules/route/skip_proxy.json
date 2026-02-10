@@ -25,7 +25,8 @@
         "wegame.com",
         "riotgames.com",
         "some.url",
-        "lolesports.com"
+        "lolesports.com",
+        "api.lolesports.com"
       ],
       "domain_keyword": [
         "tencent"
