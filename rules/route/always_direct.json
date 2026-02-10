@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "rules": [
+    {
+      "domain": [
+        "www.sxjkjyx.com"
+      ],
+      "domain_suffix": [
+        "sxjkjyx.com"
+      ],
+      "domain_keyword": [
+        "sxjk",
+        "sxjt"
+      ],
+      "process_name": [
+        "LeagueClient.exe",
+      ]
+    }
+  ]
+}
