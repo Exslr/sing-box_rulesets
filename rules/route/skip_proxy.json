@@ -42,6 +42,8 @@
         "LeagueClient.exe",
         "LeagueClientUx.exe",
         "League of Legends.exe",
+        "LeagueClientUxRender.exe",
+        "PhoneExperienceHost.exe",
         "wegame.exe",
         "cs2.exe",
         "UURemote.exe",
