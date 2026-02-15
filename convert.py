@@ -40,6 +40,7 @@ sources = {
     "cn_apple_cdn": {"url": "https://ruleset.skk.moe/sing-box/domainset/apple_cdn.json", "type": "route"},
     "apple_cn": {"url": "https://ruleset.skk.moe/sing-box/non_ip/apple_cn.json", "type": "route"},
     "apple_services": {"url": "https://ruleset.skk.moe/sing-box/non_ip/apple_services.json", "type": "route"},
+    "github": {"url": "https://ruleset.skk.moe/sing-box/non_ip/my_git.json", "type": "route"},
     "microsoft_cdn": {"url": "https://ruleset.skk.moe/sing-box/non_ip/microsoft_cdn.json", "type": "route"},
     "microsoft": {"url": "https://ruleset.skk.moe/sing-box/non_ip/microsoft.json", "type": "route"},
     "domainset_download": {"url": "https://ruleset.skk.moe/sing-box/domainset/download.json", "type": "route"},
