@@ -1,14 +1,13 @@
 {
-  "version": 1,
   "rules": [
     {
       "domain": [
         "www.sxjkjyx.com",
-        "www.jtjt.info"
       ],
       "domain_suffix": [
         "sxjkjyx.com",
         "jtjt.info",
+        "fanovel.com",
         "tianmeiplaza.com"
       ],
       "domain_keyword": [
@@ -16,6 +15,7 @@
         "sxjt",
         "jtjt",
         "sxjtjt",
+        "fanovel",
         "tianmeiplaza"
       ]
     }
