@@ -1,0 +1,5 @@
+!name:[heyst] skip proxy
+#!desc=自动绕过特定域名（包括腾讯、美团、Steam及部分国内常用域名），直接进行连接
+
+[Genral]
+skip_proxy = %APPEND% *.cn, facetime.apple.com, ess.apple.com, push.apple.com, identity.apple.com, init.itunes.apple.com, *.qq.com, *.gtimg.com, *.wegame.com, *.riotgames.com, *.some.url, *.lolesports.com, *.steampowered.com, *.steamstatic.com, *.dianping.com, *.maoyan.com, *.meituan.com, *.meituan.net, *.mtyun.com, *.neixin.cn, *.sankuai.com, *.sxjkjyx.com, *.jtjt.info, *.fanovel.com, *tencent*, *weixin*, *wechat*, *meituan*, *steamserver.net*, *sxjk*, *sxjt*, *jtjt*, *sxjtjt*, *fanovel*
