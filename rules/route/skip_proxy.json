@@ -1,21 +1,6 @@
 {
-  "version": 1,
+  "version": 3,
   "rules": [
-    {
-      "process_name": [
-        "LeagueClient.exe",
-        "LeagueClientUx.exe",
-        "League of Legends.exe",
-        "LeagueClientUxRender.exe",
-        "PhoneExperienceHost.exe",
-        "RiotClientServices.exe",
-        "weixin.exe",
-        "wegame.exe",
-        "cs2.exe",
-        "UURemote.exe",
-        "UURemoteInternal.exe"
-      ]
-    },
     {
       "domain": [
         "www.baidu.com"
@@ -42,19 +27,32 @@
         "some.url",
         "lolesports.com",
         "api.lolesports.com",
+        "cm.steampowered.com",
+        "test.steampowered.com",
+        "shared.fastly.steamstatic.com",
         "dianping.com",
         "maoyan.com",
         "meituan.com",
         "meituan.net",
         "mtyun.com",
         "neixin.cn",
-        "sankuai.com"
+        "sankuai.com",
+        "sxjkjyx.com",
+        "jtjt.info",
+        "fanovel.com",
+        "amap.com"
       ],
       "domain_keyword": [
         "tencent",
         "weixin",
         "wechat",                  
-        "meituan"
+        "meituan",
+        "steamserver.net",
+        "sxjk",
+        "sxjt",
+        "jtjt",
+        "sxjtjt",
+        "fanovel"
       ]
     }
   ]
