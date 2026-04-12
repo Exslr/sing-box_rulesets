@@ -1,22 +1,18 @@
-{
-  "version": 1,
+{  
+  "version": 3,
   "rules": [
     {
       "domain": [
-        "www.sxjkjyx.com"
+        "www.sxjkjyx.com",
+        "clash.razord.top",
+        "yacd.metacubex.one",
+        "yacd.haishan.me",
+        "d.metacubex.one"
       ],
       "domain_suffix": [
-        "sxjkjyx.com",
-        "jtjt.info",
-        "fanovel.com",
         "tianmeiplaza.com"
       ],
       "domain_keyword": [
-        "sxjk",
-        "sxjt",
-        "jtjt",
-        "sxjtjt",
-        "fanovel",
         "tianmeiplaza"
       ]
     }
