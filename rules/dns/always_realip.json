@@ -3,8 +3,8 @@
   "rules": [
     {
       "domain": [
-        "dns.msftncsi.com",
-        "stun.syncthing.net"
+        "stun.syncthing.net",
+        "dns.msftncsi.com"
       ],
       "domain_suffix": [
         ".srv.nintendo.net",
