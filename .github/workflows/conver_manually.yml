@@ -16,7 +16,7 @@ on:
           - route/through_proxy.json
           - route/direct_process.json
           # 在此处手动添加你 rules 文件夹下具体的文件路径
-push:
+  push:
     branches:
       - main
     paths:
