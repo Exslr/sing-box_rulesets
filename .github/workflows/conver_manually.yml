@@ -36,7 +36,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # 必须设为 2，否则 git diff 找不到上一个版本
+          fetch-depth: 0 # 必须设为 2，否则 git diff 找不到上一个版本
           
       - name: Install sing-box
         run: |
@@ -51,7 +51,7 @@ jobs:
 
           # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
           if [ -z "$SELECTED" ]; then
-            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^rules/.*\.json$' | head -n 1 | sed 's|rules/||')
+            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^rules/' | head -n 1 | sed 's|^rules/||')
           fi
           
           # 定义转换逻辑
