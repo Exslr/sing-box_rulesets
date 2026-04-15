@@ -24,7 +24,7 @@ on:
       - 'rules/route/always_direct.json'
       - 'rules/route/skip_proxy.json'
       - 'rules/route/through_proxy.json'
-      - 'route/route/direct_process.json'
+      - 'rules/route/direct_process.json'
       
 jobs:
   convert:
