@@ -36,53 +36,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 必须设置为 0，否则无法对比历史记录找到变更文件
-
+          fetch-depth: 2 # 必须设为 2，否则 git diff 找不到上一个版本
+          
       - name: Install sing-box
         run: |
           VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep tag_name | cut -d ":" -f2 | sed 's/\"//g;s/,//g;s/ //g;s/v//')
           wget https://github.com/SagerNet/sing-box/releases/download/v${VERSION}/sing-box-${VERSION}-linux-amd64.tar.gz
           tar -xvf sing-box-${VERSION}-linux-amd64.tar.gz
           sudo mv sing-box-${VERSION}-linux-amd64/sing-box /usr/local/bin/
-          
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          files: rules/**/*.json
-          
+
       - name: Convert Rules
         run: |
+          SELECTED="${{ github.event.inputs.target_file }}"
+
+          # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
+          if [ -z "$SELECTED" ]; then
+            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^rules/.*\.json$' | head -n 1 | sed 's|rules/||')
+          fi
+          
+          # 定义转换逻辑
+          # $1 是相对于 rules 文件夹的路径，如 "dns/test.json"
           do_compile() {
             local rel_path=$1
             local src="rules/$rel_path"
             local dest="srs/${rel_path%.json}.srs"
-            if [ -f "$src" ]; then
-              mkdir -p "$(dirname "$dest")"
-              echo "🚀 Compiling: $src -> $dest"
-              sing-box rule-set compile "$src" -o "$dest"
-            fi
+            
+            mkdir -p "$(dirname "$dest")"
+            echo "Converting: $src -> $dest"
+            sing-box rule-set compile "$src" -o "$dest"
           }
 
-          # 情况 1: 手动触发且不是 ALL
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.target_file }}" != "ALL" ]; then
-            echo "Trigger: Manual single file"
-            do_compile "${{ github.event.inputs.target_file }}"
-
-          # 情况 2: 手动触发 ALL
-          elif [ "${{ github.event.inputs.target_file }}" = "ALL" ]; then
-            echo "Trigger: Manual ALL files"
+          if [ "$SELECTED" = "ALL" ]; then
+            echo "Mode: Converting ALL files in rules/dns and rules/route"
+            # 遍历 rules 目录下所有的 json
             find rules -name "*.json" | while read -r full_path; do
-              do_compile "${ full_path#rules/ }"
+              # 提取相对于 rules/ 的路径
+              rel_path=${full_path#rules/}
+              do_compile "$rel_path"
             done
-
-          # 情况 3: Push 自动触发，仅处理变更文件
           else
-            echo "Trigger: Push (Auto detect changes)"
-            for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-              # 去掉开头的 rules/ 前缀传给函数
-              do_compile "${file#rules/}"
-            done
+            echo "Mode: Converting single file: $SELECTED"
+            do_compile "$SELECTED"
           fi
 
       - name: Commit and Push
