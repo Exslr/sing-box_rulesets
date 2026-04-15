@@ -14,8 +14,18 @@ on:
           - route/always_direct.json
           - route/skip_proxy.json
           - route/through_proxy.json
+          - route/direct_process.json
           # 在此处手动添加你 rules 文件夹下具体的文件路径
-
+push:
+    branches:
+      - main
+    paths:
+      - 'rules/dns/always_realip.json'
+      - 'rules/route/always_direct.json'
+      - 'rules/route/skip_proxy.json'
+      - 'rules/route/through_proxy.json'
+      - 'route/direct_process.json'
+      
 jobs:
   convert:
     runs-on: ubuntu-latest
@@ -25,6 +35,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 必须设置为 0，否则无法对比历史记录找到变更文件
 
       - name: Install sing-box
         run: |
@@ -32,34 +44,45 @@ jobs:
           wget https://github.com/SagerNet/sing-box/releases/download/v${VERSION}/sing-box-${VERSION}-linux-amd64.tar.gz
           tar -xvf sing-box-${VERSION}-linux-amd64.tar.gz
           sudo mv sing-box-${VERSION}-linux-amd64/sing-box /usr/local/bin/
-
+          
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: rules/**/*.json
+          
       - name: Convert Rules
         run: |
-          SELECTED="${{ github.event.inputs.target_file }}"
-          
-          # 定义转换逻辑
-          # $1 是相对于 rules 文件夹的路径，如 "dns/test.json"
           do_compile() {
             local rel_path=$1
             local src="rules/$rel_path"
             local dest="srs/${rel_path%.json}.srs"
-            
-            mkdir -p "$(dirname "$dest")"
-            echo "Converting: $src -> $dest"
-            sing-box rule-set compile "$src" -o "$dest"
+            if [ -f "$src" ]; then
+              mkdir -p "$(dirname "$dest")"
+              echo "🚀 Compiling: $src -> $dest"
+              sing-box rule-set compile "$src" -o "$dest"
+            fi
           }
 
-          if [ "$SELECTED" = "ALL" ]; then
-            echo "Mode: Converting ALL files in rules/dns and rules/route"
-            # 遍历 rules 目录下所有的 json
+          # 情况 1: 手动触发且不是 ALL
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.target_file }}" != "ALL" ]; then
+            echo "Trigger: Manual single file"
+            do_compile "${{ github.event.inputs.target_file }}"
+
+          # 情况 2: 手动触发 ALL
+          elif [ "${{ github.event.inputs.target_file }}" = "ALL" ]; then
+            echo "Trigger: Manual ALL files"
             find rules -name "*.json" | while read -r full_path; do
-              # 提取相对于 rules/ 的路径
-              rel_path=${full_path#rules/}
-              do_compile "$rel_path"
+              do_compile "${ full_path#rules/ }"
             done
+
+          # 情况 3: Push 自动触发，仅处理变更文件
           else
-            echo "Mode: Converting single file: $SELECTED"
-            do_compile "$SELECTED"
+            echo "Trigger: Push (Auto detect changes)"
+            for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+              # 去掉开头的 rules/ 前缀传给函数
+              do_compile "${file#rules/}"
+            done
           fi
 
       - name: Commit and Push
