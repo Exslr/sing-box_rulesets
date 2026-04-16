@@ -51,6 +51,7 @@ sources = {
     "non_ip/global": {"url": "https://ruleset.skk.moe/List/non_ip/global.conf", "type": "non_ip"},
     "ip/domestic": {"url": "https://ruleset.skk.moe/List/ip/domestic.conf", "type": "ip"},
     "ip/china_ip": {"url": "https://ruleset.skk.moe/List/ip/china_ip.conf", "type": "ip"},
+    "geosite/steam@cn": {"url": "https://surge.bojin.co/geosite/balanced/steam@cn", "type": "geosite"},
     "geosite/geolocation-cn": {"url": "https://surge.bojin.co/geosite/balanced/geolocation-cn", "type": "geosite"},
     "geosite/geolocation-!cn": {"url": "https://surge.bojin.co/geosite/balanced/geolocation-!cn", "type": "geosite"},
     "geosite/gfw": {"url": "https://cdn.jsdelivr.net/gh/Loyalsoldier/surge-rules@release/ruleset/gfw.txt", "type": "geosite"},
