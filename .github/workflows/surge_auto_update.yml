@@ -1,36 +1,78 @@
-name: Update Rules in Branch Surge
+name: Sync JSON to Surge Branch
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'rules/route/skip_proxy.json'
+      - 'rules/route/always_direct.json'
+      - 'rules/route/through_proxy.json'
   workflow_dispatch:
 
+# 消除 Node.js 20 弃用警告
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
-  update-surge:
+  sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      # 升级到 v4，支持 Node.js 20/24
-      - name: Checkout Surge Branch
+      # 1. 检出 main 分支到 main_files 目录
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          path: main_files
+          fetch-depth: 0 # 获取完整历史以便对比变动
+
+      # 2. 检出 surge 分支到 surge_files 目录
+      - name: Checkout surge
         uses: actions/checkout@v4
         with:
           ref: surge
           path: surge_files
 
-      # 升级到 v5
+      # 3. 识别变动的文件
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          path: main_files
+          files: |
+            rules/route/*.json
+
+      # 4. 配置 Python 环境
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # 顺便用个新点的 Python 版本
+          python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install requests
+      # 5. 运行转换脚本 (根据触发方式决定全量还是增量)
+      - name: Run Converter
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "手动触发：执行全量转换"
+            python main_files/scripts/convert_json_to_conf.py
+          else
+            echo "Push触发：仅转换变动文件"
+            python main_files/scripts/convert_json_to_conf.py ${{ steps.changed-files.outputs.all_changed_files }}
+          fi
 
-      - name: Run convert script
-        run: python surge_files/scripts/convert.py
-
-      - name: Commit and Push to Surge Branch
+      # 6. 提交变动到 surge 分支
+      - name: Commit and Push to Surge
+        working-directory: ./surge_files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update: $(date +'%Y-%m-%d %H:%M:%S')" && git push origin surge)
+          
+          # 此时在 surge 分支根目录，添加 custom 文件夹下的所有 conf
+          git add custom/*.conf
+          
+          if git diff --staged --quiet; then
+            echo "没有发现内容变动，跳过推送。"
+          else
+            git commit -m "Sync rules: ${{ steps.changed-files.outputs.all_changed_files }} (Node24 Opt-in)"
+            git push origin surge
+          fi
