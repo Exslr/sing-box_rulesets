@@ -47,7 +47,7 @@ jobs:
           echo "Detected changes in: $CHANGED"
           cd ..
           # 运行脚本并传入变动列表
-          python main_files/scripts/convert_json_to_conf.py "$CHANGED"
+          python scripts/convert_json_to_conf.py "$CHANGED"
 
       # 5. 提交变动到 surge 分支
       - name: Commit and Push
