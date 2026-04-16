@@ -24,7 +24,7 @@ jobs:
         run: pip install requests
 
       - name: Run Task (Download & Convert)
-        run: python convert.py
+        run: python scripts/convert.py
 
       - name: Set up Sing-Box
         run: |
