@@ -58,7 +58,7 @@ sources = {
 
 def process_source(name, info):
     url = info["url"]
-    folder = f"{surge/info['type']}"
+    folder = f"surge/{info['type']}"
     os.makedirs(folder, exist_ok=True)
     
     # 自动获取后缀名 (.conf 或 .json)
