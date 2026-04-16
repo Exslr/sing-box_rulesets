@@ -1,60 +1,73 @@
 import json
-import os
 import sys
+import os
 
-# 任务配置表
-TASKS_MAP = {
-    'rules/route/skip_proxy.json': 'skip_proxy',
-    'rules/route/always_direct.json': 'always_direct',
-    'rules/route/through_proxy.json': 'through_proxy',
-    'rules/route/steam@cn.json': 'steam@cn',
-}
+def convert(src_path, dest_path):
+    if not os.path.exists(src_path):
+        print(f"Error: Source {src_path} not found")
+        sys.exit(1)
 
-def convert(json_rel_path, conf_name):
-    source = f'main_files/{json_rel_path}'
-    target = f'surge_files/custom/{conf_name}.conf'
-    
-    if not os.path.exists(source):
-        print(f"--- 跳过: {json_rel_path} (源文件不存在) ---")
-        return
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
-    print(f">>> 正在转换: {json_rel_path} -> {conf_name}.conf")
-    
-    with open(source, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    # 判定策略
+    policy = "PROXY" if "through_proxy" in src_path else "DIRECT"
 
-    surge_rules = []
-    mapping = {'domain': 'DOMAIN', 'domain_suffix': 'DOMAIN-SUFFIX', 'domain_keyword': 'DOMAIN-KEYWORD', 'ip_cidr': 'IP-CIDR'}
+    try:
+        with open(src_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # 兼容嵌套和扁平结构
+        rules_data = data.get("rules", [data])[0]
+        
+        output = [
+            f"# Surge Rule-Set: {os.path.basename(dest_path)}",
+            f"# Generated from {os.path.basename(src_path)}",
+            f"# Policy: {policy}\n"
+        ]
 
-    for rule_obj in data.get('rules', []):
-        for sb_key, surge_key in mapping.items():
-            if sb_key in rule_obj:
-                for val in rule_obj[sb_key]:
-                    # 转换 domain_suffix: .google.com -> google.com
-                    if sb_key == 'domain_suffix' and val.startswith('.'):
-                        val = val[1:]
-                    surge_rules.append(f"{surge_key},{val}")
+        # 1. Surge Rule-Set 支持的标准字段
+        mapping = {
+            "domain": "DOMAIN",
+            "domain_suffix": "DOMAIN-SUFFIX",
+            "domain_keyword": "DOMAIN-KEYWORD",
+            "ip_cidr": "IP-CIDR"
+        }
 
-    os.makedirs(os.path.dirname(target), exist_ok=True)
-    with open(target, 'w', encoding='utf-8') as f:
-        f.write(f"# Surge Rule-Set: {conf_name}\n\n")
-        f.write("\n".join(surge_rules))
+        for sb_key, surge_type in mapping.items():
+            for item in rules_data.get(sb_key, []):
+                if sb_key == "ip_cidr":
+                    output.append(f"{surge_type},{item},{policy},no-resolve")
+                else:
+                    output.append(f"{surge_type},{item},{policy}")
+
+        # 2. 处理 Surge Rule-Set 不支持的字段 (Regex & Process)
+        unsupported_mapping = {
+            "domain_regex": "REGEX",
+            "process_name": "PROCESS-NAME",
+            "process_path": "PROCESS-PATH"
+        }
+
+        has_unsupported = False
+        for sb_key, label in unsupported_mapping.items():
+            items = rules_data.get(sb_key, [])
+            if items:
+                if not has_unsupported:
+                    output.append(f"\n# --- Unsupported Rules in Surge Rule-Set (Commented Out) ---")
+                    has_unsupported = True
+                for item in items:
+                    output.append(f"# {label}: {item} (Move to Main Profile if needed)")
+
+        with open(dest_path, 'w', encoding='utf-8') as f:
+            f.write("\n".join(output))
+        
+        print(f"Success: {src_path} -> {dest_path}")
+
+    except Exception as e:
+        print(f"Failed to convert {src_path}: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    # 获取参数列表
-    changed_files = sys.argv[1:]
-    
-    # 【核心逻辑修改】
-    if not changed_files:
-        # 如果没有任何参数（手动触发或列表为空），处理所有任务
-        print("提示: 未检测到特定变动文件，启动全量转换模式...")
-        for json_path, conf_name in TASKS_MAP.items():
-            convert(json_path, conf_name)
+    if len(sys.argv) == 3:
+        convert(sys.argv[1], sys.argv[2])
     else:
-        # 如果有名单，则只处理名单内的文件
-        print(f"提示: 检测到变动名单，启动定向转换模式...")
-        for file_path in changed_files:
-            if file_path in TASKS_MAP:
-                convert(file_path, TASKS_MAP[file_path])
-            else:
-                print(f"--- 忽略无关文件: {file_path} ---")
+        print("Usage: python3 convert_to_surge.py <input_json> <output_conf>")
