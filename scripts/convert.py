@@ -65,7 +65,7 @@ sources = {
 
 def process_source(name, info):
     url = info["url"]
-    folder = f"rules/{info['type']}"
+    folder = f"singbox/rules/{info['type']}"
     os.makedirs(folder, exist_ok=True)
     
     print(f"Processing {name} from {url}...")
