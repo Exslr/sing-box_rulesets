@@ -1,4 +1,4 @@
-name: Update Rules in Branch Surge
+name: Update Rules in Branch Surge Every Week
 
 on:
   schedule:
