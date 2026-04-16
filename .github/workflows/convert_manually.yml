@@ -55,9 +55,9 @@ jobs:
           fi
           
           # 定义转换逻辑
-          # $2 是相对于 source 文件夹的路径，如 "dns/test.json"
+          # $1 是相对于 source 文件夹的路径，如 "dns/test.json"
           do_compile() {
-            local rel_path=$2
+            local rel_path=$1
             local src="singbox/source/$rel_path"
             local dest="singbox/binary/${rel_path%.json}.srs"
             
