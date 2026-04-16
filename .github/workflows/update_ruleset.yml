@@ -36,19 +36,19 @@ jobs:
       - name: Compile to SRS
         run: |
           # 编译 DNS 分类
-          if [ -d "rules/dns" ]; then
-            mkdir -p srs/dns
-            for file in rules/dns/*.json; do
+          if [ -d "singbox/rules/dns" ]; then
+            mkdir -p singbox/srs/dns
+            for file in singbox/rules/dns/*.json; do
               filename=$(basename "$file" .json)
-              sing-box rule-set compile "$file" --output "srs/dns/${filename}.srs"
+              sing-box rule-set compile "$file" --output "singbox/srs/dns/${filename}.srs"
             done
           fi
           # 编译 Route 分类
-          if [ -d "rules/route" ]; then
-            mkdir -p srs/route
-            for file in rules/route/*.json; do
+          if [ -d "singbox/rules/route" ]; then
+            mkdir -p singbox/srs/route
+            for file in singbox/rules/route/*.json; do
               filename=$(basename "$file" .json)
-              sing-box rule-set compile "$file" --output "srs/route/${filename}.srs"
+              sing-box rule-set compile "$file" --output "singbox/srs/route/${filename}.srs"
             done
           fi
 
@@ -56,7 +56,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add rules/ srs/
+          git add singbox/rules/ singbox/srs/
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "Auto Update Rules $(date +'%Y-%m-%d')"
             git push
