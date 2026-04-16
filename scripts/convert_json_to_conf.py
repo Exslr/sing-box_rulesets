@@ -6,7 +6,8 @@ import sys
 TASKS_MAP = {
     'rules/route/skip_proxy.json': 'skip_proxy',
     'rules/route/always_direct.json': 'always_direct',
-    'rules/route/through_proxy.json': 'through_proxy'
+    'rules/route/through_proxy.json': 'through_proxy',
+    'rules/route/steam@cn.json': 'steam@cn',
 }
 
 def convert(json_rel_path, conf_name):
