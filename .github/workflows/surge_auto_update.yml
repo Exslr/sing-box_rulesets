@@ -1,35 +1,4 @@
 name: Update Rules in Branch Surge
 
 on:
-  schedule:
-    - cron: '0 0 * * *'
   workflow_dispatch:
-
-jobs:
-  update-surge:
-    runs-on: ubuntu-latest
-    steps:
-      # 升级到 v4，支持 Node.js 20/24
-      - name: Checkout Surge Branch
-        uses: actions/checkout@v4
-        with:
-          ref: surge
-
-      # 升级到 v5
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11' # 顺便用个新点的 Python 版本
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Run convert script
-        run: python convert.py
-
-      - name: Commit and Push to Surge Branch
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update: $(date +'%Y-%m-%d %H:%M:%S')" && git push origin surge)
