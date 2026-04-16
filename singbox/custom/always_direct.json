@@ -1,0 +1,36 @@
+{  
+  "version": 3,
+  "rules": [
+    {
+      "domain": [
+        "www.sxjkjyx.com",
+        "clash.razord.top",
+        "yacd.metacubex.one",
+        "yacd.haishan.me",
+        "d.metacubex.one"
+      ],
+      "domain_suffix": [
+        ".cn",
+        "exslr.com",
+        "tianmeiplaza.com",
+        "neixin.cn",
+        "sankuai.com",
+        "sxjkjyx.com",
+        "jtjt.info",
+        "kconfig-aud.pages.dev",
+        "wpk11.net",
+        "wpk.com",
+        "wepoker.com"
+      ],
+      "domain_keyword": [
+        "tianmeiplaza",
+        "steamserver.net",
+        "sxjk",
+        "sxjt",
+        "jtjt",
+        "sxjtjt",
+        "meituan"
+      ]
+    }
+  ]
+}
