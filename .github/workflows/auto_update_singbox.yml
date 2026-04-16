@@ -57,7 +57,10 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add singbox/source/ singbox/binary/
-          if [ -n "$(git status --porcelain)" ]; then
+          if git diff --cached --quiet; then
+            echo "No changes to commit (nothing added to stash)."
+          else
+            echo "Changes detected, committing..."
             git commit -m "Auto Update Rules $(date +'%Y-%m-%d')"
             git push
           fi
