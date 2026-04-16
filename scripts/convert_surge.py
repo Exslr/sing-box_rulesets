@@ -52,6 +52,7 @@ sources = {
     "ip/domestic": {"url": "https://ruleset.skk.moe/List/ip/domestic.conf", "type": "ip"},
     "ip/china_ip": {"url": "https://ruleset.skk.moe/List/ip/china_ip.conf", "type": "ip"},
     "geosite/steam@cn": {"url": "https://surge.bojin.co/geosite/balanced/steam@cn", "type": "geosite"},
+    "geosite/game_download": {"url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Game/GameDownload/GameDownload.list", "type": "geosite"},
     "geosite/category-games@cn": {"url": "https://surge.bojin.co/geosite/balanced/category-games@cn", "type": "geosite"},
     "geosite/category-games": {"url": "https://surge.bojin.co/geosite/balanced/category-games", "type": "geosite"},
     "geosite/geolocation-cn": {"url": "https://surge.bojin.co/geosite/balanced/geolocation-cn", "type": "geosite"},
