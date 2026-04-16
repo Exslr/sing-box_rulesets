@@ -5,7 +5,10 @@ on:
     branches:
       - main
     paths:
-      - 'rules/route/skip_proxy.json' # 只有这个文件变动才触发
+      - 'rules/route/skip_proxy.json'
+      - 'route/always_direct.json'
+      - 'route/skip_proxy.json'
+      - 'route/through_proxy.json'
   workflow_dispatch:
 
 jobs:
