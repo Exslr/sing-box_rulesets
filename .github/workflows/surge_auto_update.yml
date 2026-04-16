@@ -1,0 +1,33 @@
+name: Update Surge Rules
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天北京时间 8:00
+  workflow_dispatch: # 允许你手动点击运行
+
+jobs:
+  update-surge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Surge Branch
+        uses: actions/checkout@v3
+        with:
+          ref: surge # <--- 关键点：指定强制拉取 surge 分支的代码
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run convert script
+        run: python convert.py # 确保你的 convert.py 也在 surge 分支里
+
+      - name: Commit and Push to Surge Branch
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update: $(date +'%Y-%m-%d %H:%M:%S')" && git push origin surge)
