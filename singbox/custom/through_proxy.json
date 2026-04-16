@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "rules": [
+    {
+      "domain_suffix": [
+        "kuromis.com",
+        "nxonearth.com",
+        "bestvcdn.com",
+        "niu66.vip",
+        "primestreams.tv",
+        "zip.co",
+        "yazhouseba.com",
+        "copilot.microsoft.com",
+        "bing.com",
+        "bing.net",
+        "bingvis.com",
+        "githubusercontent.com"
+      ],
+      "domain_keyword": [
+        "revolut",
+        "anzplus",
+        "afterpay",
+        "chippay",
+        "coinspot"
+      ]
+    }
+  ]
+}
