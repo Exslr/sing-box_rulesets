@@ -28,7 +28,7 @@ jobs:
         run: pip install requests
 
       - name: Run convert script
-        run: python scripts/convert_json_to_conf.py
+        run: python scripts/convert_surge.py
 
       - name: Commit and Push to Surge Branch
         run: |
