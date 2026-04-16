@@ -2,7 +2,8 @@ name: Update Rules in Branch Surge
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * 0'
+    
   workflow_dispatch:
   
 env:
@@ -11,6 +12,9 @@ env:
 jobs:
   update-surge:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
     steps:
       # 升级到 v4，支持 Node.js 20/24
       - name: Checkout Surge Branch
