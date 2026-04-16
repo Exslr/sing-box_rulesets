@@ -1,4 +1,4 @@
-name: Classified Rule Factory
+name: Ruleset Auto Update - singbox
 
 on:
   schedule:
@@ -24,7 +24,7 @@ jobs:
         run: pip install requests
 
       - name: Run Task (Download & Convert)
-        run: python scripts/convert.py
+        run: python scripts/convert_singbox.py
 
       - name: Set up Sing-Box
         run: |
