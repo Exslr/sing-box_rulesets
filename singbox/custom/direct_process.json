@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "rules": [
+    {
+      "process_name": [
+        "RiotClientServices.exe",
+        "LeagueClient.exe",
+        "LeagueClientUx.exe",
+        "LeagueClientUxRender.exe",
+        "League of Legends.exe",
+        "douyin.exe",
+        "qq.exe",
+        "Weixin.exe",
+        "WeGame.exe",
+        "WeGameLauncher.exe",
+        "tgp_daemon.exe",
+        "cs2.exe",
+        "douyin.exe",
+        "FileSyncHelper.exe",
+        "PhoneExperienceHost.exe",
+        "Tai.exe"
+      ]
+    }
+  ]
+}
