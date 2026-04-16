@@ -6,9 +6,8 @@ on:
       - main
     paths:
       - 'rules/route/skip_proxy.json'
-      - 'route/always_direct.json'
-      - 'route/skip_proxy.json'
-      - 'route/through_proxy.json'
+      - 'rules/route/always_direct.json'
+      - 'rules/route/through_proxy.json'
   workflow_dispatch:
 
 jobs:
