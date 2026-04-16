@@ -51,7 +51,7 @@ jobs:
 
           # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
           if [ -z "$SELECTED" ]; then
-            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/source/' | head -n 1 | sed 's|^singbox/source/||')
+            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/source/custom/' | head -n 1 | sed 's|^singbox/source/custom/||')
           fi
           
           # 定义转换逻辑
