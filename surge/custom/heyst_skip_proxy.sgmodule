@@ -1,0 +1,6 @@
+#!name=[heyst] skip proxy
+#!desc=Last Updated: 2026-04-08T04:07:47.274Z
+#!desc=自动绕过特定域名（包括腾讯、美团、Steam及部分国内常用域名），直接进行连接
+
+[Genral]
+skip_proxy = %APPEND% 127.0.0.0/8, 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 17.0.0.0/8, 100.64.0.0/10, 162.14.0.0/16, 211.99.96.0/19, 162.159.192.0/24, 162.159.193.0/24, 162.159.195.0/24, fc00::/7, fe80::/10, localhost, *.local, *.cn, amap.com, captive.apple.com, mask.apple-dns.net, mask.icloud.com, mask-h2.icloud.com, passenger.t3go.cn, *.ccb.com, wxh.wo.cn, *.abcchina.com, *.abcchina.com.cn, *.crashlytics.com, facetime.apple.com, ess.apple.com, push.apple.com, identity.apple.com, init.itunes.apple.com, douyinvod.com, qq.com, gtimg.com, wegame.com, riotgames.com, some.url, lolesports.com, steampowered.com, steamstatic.com, dianping.com, maoyan.com, meituan.com, meituan.net, mtyun.com, neixin.cn, sankuai.com, sxjkjyx.com, jtjt.info, fanovel.com, *tencent*, *weixin*, *wechat*, *meituan*, *steamserver.net*, *sxjk*, *sxjt*, *jtjt*, *sxjtjt*, *fanovel*
