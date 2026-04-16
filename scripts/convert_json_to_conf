@@ -1,0 +1,47 @@
+import json
+import os
+
+def singbox_v3_to_surge(json_path, conf_path):
+    if not os.path.exists(json_path):
+        print(f"错误: 找不到源文件 {json_path}")
+        return
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    surge_rules = []
+    mapping = {
+        'domain': 'DOMAIN',
+        'domain_suffix': 'DOMAIN-SUFFIX',
+        'domain_keyword': 'DOMAIN-KEYWORD',
+        'ip_cidr': 'IP-CIDR'
+    }
+
+    rules_list = data.get('rules', [])
+    for rule_obj in rules_list:
+        for sb_key, surge_key in mapping.items():
+            if sb_key in rule_obj:
+                items = rule_obj[sb_key]
+                for val in items:
+                    # 处理 domain_suffix 的点
+                    if sb_key == 'domain_suffix' and val.startswith('.'):
+                        val = val[1:]
+                    surge_rules.append(f"{surge_key},{val}")
+
+    # 自动创建 surge/custom/ 文件夹
+    os.makedirs(os.path.dirname(conf_path), exist_ok=True)
+
+    with open(conf_path, 'w', encoding='utf-8') as f:
+        f.write("# Surge Rule-Set\n# Generated from main/rules/route/skip_proxy.json\n\n")
+        f.write("\n".join(surge_rules))
+    
+    print(f"转换成功: {conf_path}")
+
+if __name__ == "__main__":
+    # 这里的路径必须与 Workflow 中的 path 参数对应
+    # 源文件：main_files 目录下的 rules/route/skip_proxy.json
+    # 目标文件：surge_files 目录下的 custom/skip_proxy.conf
+    singbox_v3_to_surge(
+        'main_files/rules/route/skip_proxy.json', 
+        'surge_files/custom/skip_proxy.conf'
+    )
