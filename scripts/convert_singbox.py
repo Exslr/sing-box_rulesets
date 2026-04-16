@@ -52,7 +52,7 @@ sources = {
     "non_ip_global": {"url": "https://ruleset.skk.moe/sing-box/non_ip/global.json", "type": "route"},
     "ip_domestic": {"url": "https://ruleset.skk.moe/sing-box/ip/domestic.json", "type": "route"},
     "china_ip": {"url": "https://ruleset.skk.moe/sing-box/ip/china_ip.json", "type": "route"},
-    "game_download": {"url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/rule/surge/Game/GameDownload/GameDownload.list", "type": "route"},
+    "game_download": {"url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Game/GameDownload/GameDownload.list", "type": "route"},
     "steam@cn": {"url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/steam@cn.json", "type": "route"},
     "category-games@cn": {"url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-games@cn.json", "type": "route"},   
     "category-games": {"url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-games.json", "type": "route"},
