@@ -1,4 +1,4 @@
-name: Update Rules in Branch Surge Every Week
+name: Ruleset Auto Update - surge
 
 on:
   schedule:
