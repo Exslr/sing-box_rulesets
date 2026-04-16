@@ -123,7 +123,7 @@ jobs:
           git add singbox/binary/**/*.srs
           git add surge/custom/*.conf
           if ! git diff --cached --quiet; then
-            git commit -m "chore: manual compile rules/${{ github.event.inputs.target_file }}"
+            git commit -m "chore: manual compile ${{ github.event.inputs.target_file }} to conf"
             git push
           else
             echo "No changes to commit."
