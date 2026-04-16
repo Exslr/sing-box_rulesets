@@ -106,7 +106,7 @@ jobs:
             # 遍历 rules 目录下所有的 json
             find singbox/source/custom -name "*.json" | while read -r full_path; do
               # 提取相对于 custom/ 的路径
-              rel_path=${basename "$full_path"}
+              rel_path=${full_path#singbox/source/custom/}
               do_compile "$rel_path"
             done
           elif [ -n "$SELECTED" ]; then
