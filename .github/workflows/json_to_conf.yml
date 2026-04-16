@@ -31,38 +31,40 @@ jobs:
           ref: surge
           path: surge_files
 
+      # 精准获取变动的文件列表
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          path: main_files
+          files: |
+            rules/route/*.json
+            
       # 3. 设置 Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 4. 识别变动并运行转换
-      - name: Run Selective Converter
-        id: converter
+      # 只把变动的文件名单传给脚本
+      - name: Run Converter
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          cd main_files
-          # 获取本次提交中变动的文件名
-          CHANGED=$(git diff --name-only HEAD^ HEAD | tr '\n' ' ')
-          echo "Detected changes in: $CHANGED"
-          cd ..
-          # 运行脚本并传入变动列表
-          python scripts/convert_json_to_conf.py "$CHANGED"
+          python main_files/scripts/convert_json_to_conf.py ${{ steps.changed-files.outputs.all_changed_files }}
 
-      # 5. 提交变动到 surge 分支
-      - name: Commit and Push
+      - name: Commit and Push to Surge
+        if: steps.changed-files.outputs.any_changed == 'true'
         working-directory: ./surge_files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 仅添加 custom 文件夹下的所有 conf 文件
           git add custom/*.conf
           
-          # 检查暂存区是否有实际变动
+          # 只有暂存区有变化才执行提交
           if git diff --staged --quiet; then
-            echo "No actual changes in rules, skipping push."
+            echo "No changes in rules."
           else
-            git commit -m "Automated Sync: Update rules based on main branch changes"
+            git commit -m "Update rules: ${{ steps.changed-files.outputs.all_changed_files }}"
             git push origin surge
           fi
