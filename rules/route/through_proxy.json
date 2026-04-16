@@ -14,13 +14,14 @@
         "bing.com",
         "bing.net",
         "bingvis.com",
-        "githubusercontent.com"
+        "githubusercontent.com",
       ],
       "domain_keyword": [
         "revolut",
         "anzplus",
         "afterpay",
-        "chippay"
+        "chippay",
+        "coinspot"
       ]
     }
   ]
