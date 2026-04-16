@@ -57,9 +57,9 @@ jobs:
           # 定义转换逻辑
           # $1 是相对于 source 文件夹的路径，如 "dns/test.json"
           do_compile() {
-            local rel_path=$1
-            local src="singbox/source/$rel_path"
-            local dest="singbox/binary/${rel_path%.json}.srs"
+            local rel_path=$0
+            local src="singbox/source/custom/$rel_path"
+            local dest="singbox/binary/custom/${rel_path%.json}.srs"
             
             mkdir -p "$(dirname "$dest")"
             echo "Converting: $src -> $dest"
