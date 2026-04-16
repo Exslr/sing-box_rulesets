@@ -10,21 +10,21 @@ on:
         type: choice
         options:
           - ALL
-          - dns/always_realip.json
-          - route/always_direct.json
-          - route/skip_proxy.json
-          - route/through_proxy.json
-          - route/direct_process.json
+          - always_realip.json
+          - always_direct.json
+          - skip_proxy.json
+          - through_proxy.json
+          - direct_process.json
           # 在此处手动添加你 rules 文件夹下具体的文件路径
   push:
     branches:
       - main
     paths:
-      - 'singbox/rules/dns/always_realip.json'
-      - 'singbox/rules/route/always_direct.json'
-      - 'singbox/rules/route/skip_proxy.json'
-      - 'singbox/rules/route/through_proxy.json'
-      - 'singbox/rules/route/direct_process.json'
+      - 'singbox/source/custom/always_realip.json'
+      - 'singbox/source/custom/always_direct.json'
+      - 'singbox/source/custom/skip_proxy.json'
+      - 'singbox/source/custom/through_proxy.json'
+      - 'singbox/source/custom/direct_process.json'
       
 jobs:
   convert:
@@ -51,15 +51,15 @@ jobs:
 
           # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
           if [ -z "$SELECTED" ]; then
-            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/rules/' | head -n 1 | sed 's|^singbox/rules/||')
+            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/soure/' | head -n 1 | sed 's|^singbox/source/||')
           fi
           
           # 定义转换逻辑
-          # $1 是相对于 rules 文件夹的路径，如 "dns/test.json"
+          # $2 是相对于 source 文件夹的路径，如 "dns/test.json"
           do_compile() {
-            local rel_path=$1
-            local src="singbox/rules/$rel_path"
-            local dest="singbox/srs/${rel_path%.json}.srs"
+            local rel_path=$2
+            local src="singbox/source/$rel_path"
+            local dest="singbox/binary/${rel_path%.json}.srs"
             
             mkdir -p "$(dirname "$dest")"
             echo "Converting: $src -> $dest"
@@ -67,11 +67,11 @@ jobs:
           }
 
           if [ "$SELECTED" = "ALL" ]; then
-            echo "Mode: Converting ALL files in rules/dns and rules/route"
+            echo "Mode: Converting ALL files in singbox/source/dns and singbox/source/route"
             # 遍历 rules 目录下所有的 json
             find rules -name "*.json" | while read -r full_path; do
               # 提取相对于 rules/ 的路径
-              rel_path=${full_path#singbox/rules/}
+              rel_path=${full_path#singbox/source/}
               do_compile "$rel_path"
             done
           else
@@ -83,55 +83,10 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add singbox/srs/**/*.srs
+          git add singbox/binary/**/*.srs
           if ! git diff --cached --quiet; then
             git commit -m "chore: manual compile rules/${{ github.event.inputs.target_file }}"
             git push
           else
             echo "No changes to commit."
-          fi
-          
-      # 转换json to conf
-      - name: Checkout main
-        uses: actions/checkout@v4
-        with:
-          path: main_files
-          fetch-depth: 0
-
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          path: main_files
-          files: |
-            singbox/rules/route/*.json
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      # 运行转换
-      - name: Run Converter
-        run: |
-          # 如果是手动触发 (workflow_dispatch)，则不传参数，触发全量转换
-          # 如果是 push 触发，则传入变动文件列表
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            python main_files/scripts/convert_json_to_conf.py
-          else
-            python main_files/scripts/convert_json_to_conf.py ${{ steps.changed-files.outputs.all_changed_files }}
-          fi
-
-      - name: Commit and Push to Surge
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
-          git add surge/custom/*.conf
-          
-          if git diff --staged --quiet; then
-            echo "没有发现任何规则变化，跳过推送。"
-          else
-            git commit -m "Sync rules (Trigger: ${{ github.event_name }})"
-            git push
           fi
