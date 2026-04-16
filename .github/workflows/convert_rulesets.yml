@@ -69,7 +69,7 @@ jobs:
           if [ "$SELECTED" = "ALL" ]; then
             echo "Mode: Converting ALL files in singbox/source/dns and singbox/source/route"
             # 遍历 singbox/source/custom 目录下所有的 json
-            find rules -name "*.json" | while read -r full_path; do
+            find singbox/source/custom -name "*.json" | while read -r full_path; do
               # 提取相对于 rules/ 的路径
               rel_path=${full_path#singbox/source/custom/}
               do_compile "$rel_path"
