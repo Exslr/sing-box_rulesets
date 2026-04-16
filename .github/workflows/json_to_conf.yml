@@ -7,6 +7,7 @@ on:
       - 'rules/route/skip_proxy.json'
       - 'rules/route/always_direct.json'
       - 'rules/route/through_proxy.json'
+      - 'rules/route/steam@cn.json'
   workflow_dispatch: # 开启手动触发按钮
 
 jobs:
