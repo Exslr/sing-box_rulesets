@@ -16,29 +16,26 @@ jobs:
       contents: write
       
     steps:
-      # 升级到 v4，支持 Node.js 20/24
-      - name: Checkout Surge Branch
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: surge
-          path: surge_files
 
-      # 升级到 v5
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # 顺便用个新点的 Python 版本
+          python-version: '3.x'
 
       - name: Install dependencies
         run: pip install requests
 
       - name: Run convert script
-        run: python surge_files/scripts/convert.py
+        run: python scripts/convert_json_to_conf.py
 
       - name: Commit and Push to Surge Branch
-        working-directory: ./surge_files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add .
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update: $(date +'%Y-%m-%d %H:%M:%S')" && git push origin surge)
+          git add surge/
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Auto Update Rules $(date +'%Y-%m-%d')"
+            git push
+          fi
