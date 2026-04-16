@@ -1,4 +1,4 @@
-name: Manual Convert Rules (JSON to SRS)
+name: Convert Rules from singbox to surge and mihomo
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
           tar -xvf sing-box-${VERSION}-linux-amd64.tar.gz
           sudo mv sing-box-${VERSION}-linux-amd64/sing-box /usr/local/bin/
 
-      - name: Convert Rules
+      - name: Convert JSON to SRS
         run: |
           SELECTED="${{ github.event.inputs.target_file }}"
 
@@ -78,12 +78,49 @@ jobs:
             echo "Mode: Converting single file: $SELECTED"
             do_compile "$SELECTED"
           fi
+      
+      - name: Convert JSON to CONF
+        run: |
+          SELECTED="${{ github.event.inputs.target_file }}"
 
+          # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
+          if [ -z "$SELECTED" ]; then
+            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/source/custom/' | head -n 1 | sed 's|^singbox/source/custom/||')
+          fi
+          
+          # 定义转换逻辑
+          # $1 是相对于 custom 文件夹的路径，如 "alway_direct.json"
+          do_compile() {
+            local rel_path=$1
+            local src="singbox/source/custom/$rel_path"
+            local dest_surge="surge/custom/${rel_path%.json}.conf"
+            
+            # 转换为 Surge CONF
+            mkdir -p "$(dirname "$dest_surge")"
+            python3 scripts/convert_json_to_conf.py "$src" "$dest_surge"
+           }
+
+          if [ "$SELECTED" = "ALL" ]; then
+            echo "Mode: Converting ALL files in singbox/source/custom"
+            # 遍历 rules 目录下所有的 json
+            find singbox/source/custom -name "*.json" | while read -r full_path; do
+              # 提取相对于 custom/ 的路径
+              rel_path=${basename "$full_path"}
+              do_compile "$rel_path"
+            done
+          elif [ -n "$SELECTED" ]; then
+            echo "Mode: Single File ($SELECTED)"
+            do_compile "$SELECTED"
+          else
+            echo "No changes detected or file selected."
+          fi
+      
       - name: Commit and Push
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add singbox/binary/**/*.srs
+          git add surge/custom/*.conf
           if ! git diff --cached --quiet; then
             git commit -m "chore: manual compile rules/${{ github.event.inputs.target_file }}"
             git push
