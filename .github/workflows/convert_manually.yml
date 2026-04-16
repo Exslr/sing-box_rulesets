@@ -90,3 +90,55 @@ jobs:
           else
             echo "No changes to commit."
           fi
+          
+      # 转换json to conf
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          path: main_files
+          fetch-depth: 0
+
+      - name: Checkout surge
+        uses: actions/checkout@v4
+        with:
+          ref: surge
+          path: surge_files
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          path: main_files
+          files: |
+            rules/route/*.json
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 运行转换
+      - name: Run Converter
+        run: |
+          # 如果是手动触发 (workflow_dispatch)，则不传参数，触发全量转换
+          # 如果是 push 触发，则传入变动文件列表
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            python main_files/scripts/convert_json_to_conf.py
+          else
+            python main_files/scripts/convert_json_to_conf.py ${{ steps.changed-files.outputs.all_changed_files }}
+          fi
+
+      - name: Commit and Push to Surge
+        working-directory: ./surge_files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add custom/*.conf
+          
+          if git diff --staged --quiet; then
+            echo "没有发现任何规则变化，跳过推送。"
+          else
+            git commit -m "Sync rules (Trigger: ${{ github.event_name }})"
+            git push origin surge
+          fi
