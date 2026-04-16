@@ -1,0 +1,49 @@
+name: Sync JSON to Surge Branch
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'rules/route/skip_proxy.json' # 只有这个文件变动才触发
+  workflow_dispatch:
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          path: main_files
+
+      - name: Checkout surge
+        uses: actions/checkout@v4
+        with:
+          ref: surge
+          path: surge_files
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Converter
+        # 假设你的脚本放在 main 分支的 scripts 文件夹里
+        run: python scripts/convert_json_to_conf.py
+
+      - name: Commit and Push
+        working-directory: ./surge_files
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add custom/skip_proxy.conf
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "没有改动，跳过提交"
+          else
+            git commit -m "Sync: update skip_proxy.conf from JSON"
+            git push origin surge
+          fi
