@@ -2,36 +2,32 @@ name: Sync JSON to Surge Branch
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'rules/route/skip_proxy.json'
       - 'rules/route/always_direct.json'
       - 'rules/route/through_proxy.json'
-  workflow_dispatch: # 保留手动触发按钮
+  workflow_dispatch: # 开启手动触发按钮
 
 jobs:
-  selective-sync:
+  sync:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      # 1. 检出 main 分支
       - name: Checkout main
         uses: actions/checkout@v4
         with:
           path: main_files
-          fetch-depth: 2 # 获取最近两次提交以对比差异
+          fetch-depth: 0
 
-      # 2. 检出 surge 分支
       - name: Checkout surge
         uses: actions/checkout@v4
         with:
           ref: surge
           path: surge_files
 
-      # 精准获取变动的文件列表
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v44
@@ -39,21 +35,24 @@ jobs:
           path: main_files
           files: |
             rules/route/*.json
-            
-      # 3. 设置 Python
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 只把变动的文件名单传给脚本
+      # 运行转换
       - name: Run Converter
-        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          python main_files/scripts/convert_json_to_conf.py ${{ steps.changed-files.outputs.all_changed_files }}
+          # 如果是手动触发 (workflow_dispatch)，则不传参数，触发全量转换
+          # 如果是 push 触发，则传入变动文件列表
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            python main_files/scripts/convert_json_to_conf.py
+          else
+            python main_files/scripts/convert_json_to_conf.py ${{ steps.changed-files.outputs.all_changed_files }}
+          fi
 
       - name: Commit and Push to Surge
-        if: steps.changed-files.outputs.any_changed == 'true'
         working-directory: ./surge_files
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -61,10 +60,9 @@ jobs:
           
           git add custom/*.conf
           
-          # 只有暂存区有变化才执行提交
           if git diff --staged --quiet; then
-            echo "No changes in rules."
+            echo "没有发现任何规则变化，跳过推送。"
           else
-            git commit -m "Update rules: ${{ steps.changed-files.outputs.all_changed_files }}"
+            git commit -m "Sync rules (Trigger: ${{ github.event_name }})"
             git push origin surge
           fi
