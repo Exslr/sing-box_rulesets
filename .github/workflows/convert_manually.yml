@@ -51,13 +51,13 @@ jobs:
 
           # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
           if [ -z "$SELECTED" ]; then
-            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/soure/' | head -n 1 | sed 's|^singbox/source/||')
+            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/source/' | head -n 1 | sed 's|^singbox/source/||')
           fi
           
           # 定义转换逻辑
           # $1 是相对于 source 文件夹的路径，如 "dns/test.json"
           do_compile() {
-            local rel_path=$0
+            local rel_path=$1
             local src="singbox/source/custom/$rel_path"
             local dest="singbox/binary/custom/${rel_path%.json}.srs"
             
@@ -71,7 +71,7 @@ jobs:
             # 遍历 rules 目录下所有的 json
             find rules -name "*.json" | while read -r full_path; do
               # 提取相对于 rules/ 的路径
-              rel_path=${full_path#singbox/source/}
+              rel_path=${full_path#singbox/source/custom/}
               do_compile "$rel_path"
             done
           else
