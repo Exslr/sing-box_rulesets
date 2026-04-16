@@ -1,0 +1,35 @@
+name: Daily Rule Update
+
+on:
+  schedule:
+    # 每天北京时间早上 8:00 运行一次 (UTC 时间 0:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许你手动点击按钮运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Run convert script
+        run: python convert.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add rules/
+          # 只有当文件有变动时才提交，防止报错
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update Rules: $(date +'%Y-%m-%d %H:%M:%S')" && git push)
