@@ -82,6 +82,7 @@ jobs:
       - name: Convert JSON to CONF
         run: |
           SELECTED="${{ github.event.inputs.target_file }}"
+          SELECTED=$(basename "$SELECTED")
 
           # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
           if [ -z "$SELECTED" ]; then
