@@ -63,7 +63,7 @@ def process_source(name, info):
     
     # 自动获取后缀名 (.conf 或 .json)
     ext = '.conf'
-    save_path = f"{folder}/{name}{ext}"
+    save_path = f"surge/{name}{ext}"
 
     print(f"Processing {name} from {url}...")
     try:
@@ -75,7 +75,7 @@ def process_source(name, info):
             f.write(response.content)
             
     except Exception as e:
-        print(f"Failed to process {folder}/{name}: {e}")
+        print(f"Failed to process surge/{name}: {e}")
 
 if __name__ == "__main__":
     for name, info in sources.items():
