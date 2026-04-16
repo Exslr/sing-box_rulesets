@@ -3,7 +3,7 @@ import requests
 import os
 
 # 配置资源列表
-# type: 'dns' 存入 rules/dns/, 'route' 存入 rules/route/
+# type: 'dns' 存入 json/dns/, 'route' 存入 json/route/
 sources = {
     # --- DNS 分流 (需要从 .conf 转换) ---
     "alibaba": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/alibaba.conf", "type": "dns"},
@@ -65,7 +65,7 @@ sources = {
 
 def process_source(name, info):
     url = info["url"]
-    folder = f"singbox/rules/{info['type']}"
+    folder = f"singbox/json/{info['type']}"
     os.makedirs(folder, exist_ok=True)
     
     print(f"Processing {name} from {url}...")
