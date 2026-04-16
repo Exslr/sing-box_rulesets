@@ -10,11 +10,11 @@ on:
         type: choice
         options:
           - ALL
-          - always_realip.json
-          - always_direct.json
-          - skip_proxy.json
-          - through_proxy.json
-          - direct_process.json
+          - custom/always_realip.json
+          - custom/always_direct.json
+          - custom/skip_proxy.json
+          - custom/through_proxy.json
+          - custom/direct_process.json
           # 在此处手动添加你 rules 文件夹下具体的文件路径
   push:
     branches:
@@ -51,15 +51,15 @@ jobs:
 
           # --- 如果是自动触发（即 SELECTED 为空），则给 SELECTED 赋值为修改的文件 ---
           if [ -z "$SELECTED" ]; then
-            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/source/custom/' | head -n 1 | sed 's|^singbox/source/custom/||')
+            SELECTED=$(git diff --name-only HEAD^ HEAD | grep '^singbox/source/' | head -n 1 | sed 's|^singbox/source/||')
           fi
           
           # 定义转换逻辑
           # $1 是相对于 source 文件夹的路径，如 "dns/test.json"
           do_compile() {
             local rel_path=$1
-            local src="singbox/source/custom/$rel_path"
-            local dest="singbox/binary/custom/${rel_path%.json}.srs"
+            local src="singbox/source/$rel_path"
+            local dest="singbox/binary/${rel_path%.json}.srs"
             
             mkdir -p "$(dirname "$dest")"
             echo "Converting: $src -> $dest"
