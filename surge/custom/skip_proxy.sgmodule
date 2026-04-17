@@ -1,4 +1,4 @@
-#!name=[heyst] skip proxy
+#!name=[Exslr] skip proxy
 #!desc=Last Updated: 2026-04-08T04:07:47.274Z
 #!desc=自动绕过特定域名（包括腾讯、美团、Steam及部分国内常用域名），直接进行连接
 
