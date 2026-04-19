@@ -10,7 +10,7 @@ on:
         type: choice
         options:
           - ALL
-          - custom/always_realip.json
+          - custom/custom_stream.json
           - custom/always_direct.json
           - custom/skip_proxy.json
           - custom/through_proxy.json
@@ -20,7 +20,7 @@ on:
     branches:
       - main
     paths:
-      - 'singbox/source/custom/always_realip.json'
+      - 'singbox/source/custom/custom_stream.json'
       - 'singbox/source/custom/always_direct.json'
       - 'singbox/source/custom/skip_proxy.json'
       - 'singbox/source/custom/through_proxy.json'
