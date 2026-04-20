@@ -13,7 +13,7 @@ sources = {
     "dns/bytedance": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/bytedance.conf", "type": "dns"},
     "dns/baidu": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/baidu.conf", "type": "dns"},
     "dns/qihoo360": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/qihoo360.conf", "type": "dns"},
-    "dns/hostpot_captive_portal": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/hotspot_captive_portal.conf", "type": "dns"},
+    "dns/hotspot_captive_portal": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/hotspot_captive_portal.conf", "type": "dns"},
     "dns/lan_without_real_ip": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/lan_without_real_ip.conf", "type": "dns"},
     "dns/lan_with_realip": {"url": "https://ruleset.skk.moe/Modules/Rules/sukka_local_dns_mapping/lan_with_realip.conf", "type": "dns"},    
     # --- 流量分流 (直接下载) ---
