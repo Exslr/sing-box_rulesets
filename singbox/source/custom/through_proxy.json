@@ -15,13 +15,15 @@
         "bing.net",
         "bingvis.com",
         "githubusercontent.com"
+        "jcomic.net"
       ],
       "domain_keyword": [
         "revolut",
         "anzplus",
         "afterpay",
         "chippay",
-        "coinspot"
+        "coinspot",
+        "jcomic"
       ]
     }
   ]
