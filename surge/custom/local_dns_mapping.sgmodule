@@ -10,6 +10,7 @@ dns.pub = server:119.29.29.29
 doh.360.cn = server:101.198.198.198
 RULE-SET:https://exslr.com/surge/dns/alibaba.conf = server:https://dns.alidns.com/dns-query
 RULE-SET:https://exslr.com/surge/dns/tencent.conf = server:https://doh.pub/dns-query
+RULE-SET:https://exslr.com/surge/ip/wechat.conf = server:https://doh.pub/dns-query
 RULE-SET:https://exslr.com/surge/dns/bilibili.conf = server:https://doh.pub/dns-query
 RULE-SET:https://exslr.com/surge/dns/xiaomi.conf = server:https://doh.pub/dns-query
 RULE-SET:https://exslr.com/surge/dns/bytedance.conf = server:180.184.2.2
