@@ -50,6 +50,7 @@ sources = {
     "non_ip/direct": {"url": "https://ruleset.skk.moe/List/non_ip/direct.conf", "type": "non_ip"},
     "non_ip/global": {"url": "https://ruleset.skk.moe/List/non_ip/global.conf", "type": "non_ip"},
     "ip/domestic": {"url": "https://ruleset.skk.moe/List/ip/domestic.conf", "type": "ip"},
+    "ip/wechat": {"url": "https://raw.githubusercontent.com/NobyDa/Script/master/Surge/WeChat.list", "type": "ip"},
     "ip/china_ip": {"url": "https://ruleset.skk.moe/List/ip/china_ip.conf", "type": "ip"},
     "geosite/steam@cn": {"url": "https://surge.bojin.co/geosite/balanced/steam@cn", "type": "geosite"},
     "geosite/game_download": {"url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Game/GameDownload/GameDownload.list", "type": "geosite"},
